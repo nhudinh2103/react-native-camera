@@ -1,3 +1,7 @@
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 buildscript {
   repositories {
     jcenter()
@@ -13,21 +17,13 @@ buildscript {
 
 apply plugin: 'com.android.library'
 
-def ext = rootProject.ext
-
-def projectReactNativeVersion = ext.has('reactNativeVersion') ? ext.reactNativeVersion : '+'
-def projectCompileSdkVersion = ext.has('compileSdkVersion') ? ext.compileSdkVersion : 26
-def projectBuildToolsVersion = ext.has('buildToolsVersion') ? ext.buildToolsVersion : '26.0.2'
-def projectMinSdkVersion = ext.has('minSdkVersion') ? ext.minSdkVersion : 16
-def projectTargetSdkVersion = ext.has('targetSdkVersion') ? ext.targetSdkVersion : 26
-
 android {
-  compileSdkVersion projectCompileSdkVersion
-  buildToolsVersion projectBuildToolsVersion
+  compileSdkVersion safeExtGet('compileSdkVersion', 26)
+  buildToolsVersion safeExtGet('buildToolsVersion', '26.0.2')
 
   defaultConfig {
-    minSdkVersion projectMinSdkVersion
-    targetSdkVersion projectTargetSdkVersion
+    minSdkVersion safeExtGet('minSdkVersion', 16)
+    targetSdkVersion safeExtGet('targetSdkVersion', 26)
     versionCode 1
     versionName "1.0.0"
   }
@@ -46,7 +42,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.facebook.react:react-native:${projectReactNativeVersion}'
+  implementation "com.facebook.react:react-native:${safeExtGet('reactNativeVersion', '+')}"
   compile "com.google.zxing:core:3.2.1"
   compile "com.drewnoakes:metadata-extractor:2.9.1"
   compile 'com.google.android.gms:play-services-vision:10.2.0'
